@@ -2,9 +2,24 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import Amplify from "../fake-amplify";
 
-export function getServerSideProps() {
+export function getStaticPaths() {
   const isConfigured = String(Amplify.isConfigured());
-  return { props: { isConfigured } };
+
+  console.log("pages/[isConfigured].js#getStaticPaths", { isConfigured });
+  return {
+    fallback: false,
+    paths: [
+      {
+        params: { isConfigured },
+      },
+    ],
+  };
+}
+
+export function getStaticProps({ params: { isConfigured } }) {
+  return {
+    props: { isConfigured },
+  };
 }
 
 export default function Home({ isConfigured }) {
@@ -17,25 +32,15 @@ export default function Home({ isConfigured }) {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          isConfigured with <code>getServerSideProps</code>?
+          isConfigured with <code>getStaticPaths</code>?
         </h1>
-
         <h2>
           <code>{isConfigured}</code>
         </h2>
 
-        <ul>
-          <li>
-            <a href="/true">
-              See <code>true</code> example (works in <code>development</code>)
-            </a>
-          </li>
-          <li>
-            <a href="/false">
-              See <code>false</code> example (works in <code>production</code>)
-            </a>
-          </li>
-        </ul>
+        <a href="/">
+          See <code>getServerSideProps</code> example
+        </a>
       </main>
     </div>
   );
